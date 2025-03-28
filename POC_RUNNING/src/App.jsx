@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Outlet } from "react-router-dom
 import Home from "./components/Home/Home";
 import Map from "./components/Map/Map";
 import styles from "./App.module.scss";
+import RunnerProfile from "./components/RunnerProfile/RunnerProfile";
 
 // Composants SVG
 const HomeIcon = () => (
@@ -53,7 +54,7 @@ function App() {
 
         <Route path="/" element={<Layout />}>
           <Route path="map" element={<Map />} />
-          <Route path="runner/:id" element={<div>Profil du Coureur</div>} />
+          <Route path="runner/:id" element={<RunnerProfile />} />
         </Route>
       </Routes>
     </Router>

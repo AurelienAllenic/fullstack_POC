@@ -5,7 +5,6 @@ import axios from "axios";
 import "leaflet/dist/leaflet.css";
 import archepov from "../../assets/archepov.png";
 import iimpov from "../../assets/iimpov.png";
-import L from "leaflet";
 import styles from "./Map.module.scss";
 
 const Map = () => {
@@ -21,10 +20,16 @@ const Map = () => {
   const [time, setTime] = useState("00:00:00");
   const [raceStarted, setRaceStarted] = useState(false);
   const [startTime, setStartTime] = useState(null);
+  const [selectedRunner, setSelectedRunner] = useState(null);
 
   // Fonctions pour le menu déroulant
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
+
+  // Gestion de la sélection d'un coureur
+  const handleRunnerSelect = (runner) => {
+    setSelectedRunner(runner);
+  };
 
   // Chronomètre
   useEffect(() => {
@@ -158,7 +163,11 @@ const Map = () => {
         </div>
         <ul className={styles.participantsList}>
           {backendLocations.map((loc, index) => (
-            <li key={index} className={styles.participant}>
+            <li 
+              key={index} 
+              className={styles.participant}
+              onClick={() => handleRunnerSelect(loc)}
+            >
               <span className={styles.participantName}>{loc.user}</span>
               <span className={styles.participantTime}>
                 {new Date(loc.timestamp).toLocaleTimeString()}
@@ -226,9 +235,10 @@ const Map = () => {
               <Popup>
                 Votre position: <br />
                 <img
-                src={iimpov}
-                style={{ width: "300px", height: "150px" }}
-              ></img>
+                  src={iimpov}
+                  style={{ width: "300px", height: "150px" }}
+                  alt="Votre vue"
+                />
                 Lat: {location[0].toFixed(4)} <br />
                 Lng: {location[1].toFixed(4)}
               </Popup>
@@ -236,18 +246,25 @@ const Map = () => {
           )}
 
           {backendLocations.map((loc, index) => (
-            <Marker key={index} position={[loc.latitude, loc.longitude]}>
-             <Popup>
-              Utilisateur: {loc.user} <br />
-              <img
-                src={loc.user == "aurel" ? iimpov : archepov}
-                style={{ width: "300px", height: "150px" }}
-              ></img>
-              <br />
-              Latitude: {loc.latitude} <br />
-              Longitude: {loc.longitude} <br />
-              Timestamp: {new Date(loc.timestamp).toLocaleString()}
-            </Popup>
+            <Marker 
+              key={index} 
+              position={[loc.latitude, loc.longitude]}
+              eventHandlers={{
+                click: () => handleRunnerSelect(loc),
+              }}
+            >
+              <Popup>
+                Utilisateur: {loc.user} <br />
+                <img
+                  src={loc.user === "aurel" ? iimpov : archepov}
+                  style={{ width: "300px", height: "150px" }}
+                  alt={`Vue de ${loc.user}`}
+                />
+                <br />
+                Latitude: {loc.latitude} <br />
+                Longitude: {loc.longitude} <br />
+                Timestamp: {new Date(loc.timestamp).toLocaleString()}
+              </Popup>
             </Marker>
           ))}
         </MapContainer>
@@ -262,15 +279,31 @@ const Map = () => {
           </button>
         )}
       </div>
-      {/* Bouton de localisation */}
-     <div className={styles.locationButtonContainer}>
-     {isAuthenticated && (
-        <button onClick={getLocation} className={styles.locationButton}>
-          <img src="/assets/icons/run.svg" alt="Localisation" />
-          Mettre à jour ma position
-        </button>
+
+      {/* Section vidéo */}
+      {selectedRunner && (
+        <div className={styles.videoSection}>
+          <h3 className={styles.videoTitle}>Vidéo en direct: {selectedRunner.user}</h3>
+          <video 
+            src="./assets/running.mp4" 
+            controls 
+            autoPlay
+            className={styles.videoPlayer}
+          >
+            Votre navigateur ne supporte pas la lecture vidéo.
+          </video>
+        </div>
       )}
-     </div>
+
+      {/* Bouton de localisation */}
+      <div className={styles.locationButtonContainer}>
+        {isAuthenticated && (
+          <button onClick={getLocation} className={styles.locationButton}>
+            <img src="/assets/icons/run.svg" alt="Localisation" />
+            Mettre à jour ma position
+          </button>
+        )}
+      </div>
     </div>
   );
 };

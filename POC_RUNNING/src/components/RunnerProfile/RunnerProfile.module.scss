@@ -1,0 +1,238 @@
+// Palette de couleurs
+$white: #FFFFFF;
+$dark: #404040;
+$green: #A1F763;
+$teal: #048A81;
+$light-gray: #F5F5F5;
+
+// Variables
+$radius: 12px;
+$shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+$transition: all 0.3s ease;
+
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: $white;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  background-color: $white;
+  box-shadow: $shadow;
+  position: relative;
+
+  h1 {
+    margin: 0 auto;
+    font-size: 1.5rem;
+    color: $dark;
+  }
+}
+
+.backButton {
+  position: absolute;
+  left: 1rem;
+  background: #F1F1F1;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition;
+
+  &:hover {
+    background: rgba($teal, 0.1);
+  }
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.profileContent {
+  padding: 1.5rem;
+  flex: 1;
+}
+
+.profileCard {
+  background: $white;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.avatarContainer {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  border: 3px solid $teal;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profileInfo {
+  width: 100%;
+  text-align: center;
+}
+
+.runnerName {
+  margin: 0 0 0.5rem;
+  color: $dark;
+  font-size: 1.5rem;
+}
+
+.runnerBio {
+  color: rgba($dark, 0.7);
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.detailItem {
+  background: $light-gray;
+  padding: 0.75rem;
+  border-radius: $radius;
+  text-align: center;
+}
+
+.detailLabel {
+  display: block;
+  font-size: 0.8rem;
+  color: rgba($dark, 0.6);
+  margin-bottom: 0.25rem;
+}
+
+.detailValue {
+  display: block;
+  font-weight: 600;
+  color: $teal;
+  font-size: 1.1rem;
+}
+
+.sectionTitle {
+  color: $dark;
+  margin: 1.5rem 0 1rem;
+  font-size: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba($dark, 0.1);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: $white;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  padding: 1rem;
+  text-align: center;
+  transition: $transition;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.statIcon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 0.5rem;
+  background: rgba($teal, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.statValue {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: $teal;
+  margin-bottom: 0.25rem;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: rgba($dark, 0.6);
+}
+
+.historyList {
+  background: $white;
+  border-radius: $radius;
+  box-shadow: $shadow;
+  overflow: hidden;
+}
+
+.raceItem {
+  padding: 1rem;
+  border-bottom: 1px solid rgba($dark, 0.05);
+  display: flex;
+  align-items: center;
+  transition: $transition;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgba($green, 0.05);
+  }
+}
+
+.raceDate {
+  min-width: 80px;
+  color: rgba($dark, 0.6);
+  font-size: 0.9rem;
+  margin-right: 1rem;
+}
+
+.raceInfo {
+  flex: 1;
+}
+
+.raceName {
+  font-weight: 500;
+  color: $dark;
+  margin-bottom: 0.25rem;
+}
+.historySection{
+    padding-bottom: 15vh;
+}
+.raceStats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: rgba($dark, 0.6);
+}
+
