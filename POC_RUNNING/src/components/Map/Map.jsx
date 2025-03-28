@@ -5,14 +5,46 @@ import axios from "axios";
 const Map = () => {
   const [location, setLocation] = useState(null);
   const [backendLocations, setBackendLocations] = useState([]);
-  const [user, setUser] = useState(""); // State pour le nom d'utilisateur
-  const [password, setPassword] = useState(""); // State pour le mot de passe
+  const [user, setUser] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Si l'utilisateur est connecté
-  const [showLoginModal, setShowLoginModal] = useState(false); // Pour gérer l'affichage de la modale de connexion
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [lastUpdateDate, setLastUpdateDate] = useState(null); // Date seule
+  const [lastUpdateTime, setLastUpdateTime] = useState(null); // Heure seule
+  const [animate, setAnimate] = useState(false); // État pour l'animation
 
-  // Fonction pour récupérer la position et l'envoyer au back-end
+  useEffect(() => {
+    const fetchAllLocations = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/api/location");
+        setBackendLocations(response.data);
+        const now = new Date();
+        const newDate = now.toLocaleDateString(); // Ex: "28/03/2025"
+        const newTime = now.toLocaleTimeString(); // Ex: "14:35:12"
+
+        setLastUpdateDate(newDate);
+        setLastUpdateTime((prevTime) => {
+          if (prevTime !== newTime) {
+            setAnimate(true); // Déclenche l'animation quand l'heure change
+            setTimeout(() => setAnimate(false), 500); // Retire après 0.5s
+          }
+          return newTime;
+        });
+      } catch (err) {
+        console.error(
+          "❌ Erreur lors du rafraîchissement des marqueurs :",
+          err
+        );
+      }
+    };
+
+    fetchAllLocations();
+    const interval = setInterval(fetchAllLocations, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const getLocation = () => {
     if (navigator.geolocation) {
       setLoading(true);
@@ -20,28 +52,17 @@ const Map = () => {
         async (position) => {
           const { latitude, longitude } = position.coords;
           setLocation([latitude, longitude]);
-
-          const token = localStorage.getItem("token"); // Récupère le token depuis le localStorage
+          const token = localStorage.getItem("token");
           if (!token) {
             setError("Vous devez être connecté pour ajouter une localisation.");
             setLoading(false);
             return;
           }
-
           try {
-            // Envoyer la localisation et le nom de l'utilisateur avec le token dans les en-têtes
             await axios.post(
               "http://localhost:5000/api/location",
-              {
-                latitude,
-                longitude,
-                user, // Ajouter l'utilisateur
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`, // Passer le token dans les en-têtes
-                },
-              }
+              { latitude, longitude, user },
+              { headers: { Authorization: `Bearer ${token}` } }
             );
             setLoading(false);
           } catch (err) {
@@ -61,54 +82,23 @@ const Map = () => {
     }
   };
 
-  // Fonction pour récupérer toutes les localisations depuis le backend
-  const fetchBackendLocations = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/api/location");
-      setBackendLocations(response.data);
-    } catch (err) {
-      console.log(
-        "Erreur lors de la récupération des données depuis le backend",
-        err
-      );
-    }
-  };
-
-  // Vérification de l'état de connexion (par exemple, avec un token dans localStorage)
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Vérifier si un token existe
-    if (token) {
-      setIsAuthenticated(true);
-    }
-    fetchBackendLocations();
+    const token = localStorage.getItem("token");
+    if (token) setIsAuthenticated(true);
   }, []);
 
-  // Fonction pour ouvrir la modale
-  const openModal = () => {
-    setShowLoginModal(true);
-  };
+  const openModal = () => setShowLoginModal(true);
+  const closeModal = () => setShowLoginModal(false);
 
-  // Fonction pour fermer la modale
-  const closeModal = () => {
-    setShowLoginModal(false);
-  };
-
-  // Fonction pour gérer la soumission du formulaire de connexion
   const handleLogin = (e) => {
     e.preventDefault();
-
     if (user && password) {
-      // Envoyer la requête de connexion à l'API
       axios
         .post("http://localhost:5000/api/login", { username: user, password })
         .then((response) => {
-          // Si la connexion réussit, on récupère le token
-          const { token } = response.data;
-
-          // Sauvegarder le token dans le localStorage
-          localStorage.setItem("token", token);
-          setIsAuthenticated(true); // Marquer l'utilisateur comme connecté
-          closeModal(); // Fermer la modale après connexion
+          localStorage.setItem("token", response.data.token);
+          setIsAuthenticated(true);
+          closeModal();
         })
         .catch((error) => {
           setError(error.response?.data?.error || "Erreur de connexion");
@@ -118,15 +108,16 @@ const Map = () => {
     }
   };
 
-  // Affichage de l'erreur ou du chargement
   if (error) return <p>Error: {error}</p>;
   if (loading) return <p>Chargement...</p>;
 
-  const [latitude, longitude] = location || [];
+  const defaultCenter =
+    backendLocations.length > 0
+      ? [backendLocations[0].latitude, backendLocations[0].longitude]
+      : [48.8566, 2.3522];
 
   return (
     <div>
-      {/* Bouton de connexion en haut à droite */}
       {!isAuthenticated && (
         <button
           onClick={openModal}
@@ -136,7 +127,6 @@ const Map = () => {
             right: "10px",
             zIndex: 1000,
             padding: "10px 20px",
-            fontSize: "16px",
             backgroundColor: "#007bff",
             color: "#fff",
             border: "none",
@@ -148,7 +138,6 @@ const Map = () => {
         </button>
       )}
 
-      {/* Modale de connexion */}
       {showLoginModal && (
         <div style={styles.modal}>
           <div style={styles.modalContent}>
@@ -171,15 +160,14 @@ const Map = () => {
               <button type="submit" style={styles.button}>
                 Se connecter
               </button>
+              <button onClick={closeModal} style={styles.button}>
+                Annuler
+              </button>
             </form>
-            <button onClick={closeModal} style={styles.button}>
-              Annuler
-            </button>
           </div>
         </div>
       )}
 
-      {/* Afficher le bouton pour ajouter la localisation si l'utilisateur est connecté */}
       {isAuthenticated && (
         <button
           onClick={getLocation}
@@ -189,7 +177,6 @@ const Map = () => {
             right: "10px",
             zIndex: 1000,
             padding: "10px 20px",
-            fontSize: "16px",
             backgroundColor: "#28a745",
             color: "#fff",
             border: "none",
@@ -201,25 +188,47 @@ const Map = () => {
         </button>
       )}
 
-      {/* Carte */}
       <MapContainer
-        center={location || [51.505, -0.09]} // Coordonnées par défaut si la localisation n'est pas disponible
+        center={location || defaultCenter}
         zoom={13}
         style={{ height: "500px", width: "100%" }}
       >
+        {lastUpdateDate && lastUpdateTime && (
+          <div
+            style={{
+              position: "absolute",
+              top: "0",
+              left: "0",
+              width: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              color: "white",
+              padding: "10px",
+              textAlign: "center",
+              zIndex: 1000,
+            }}
+          >
+            Dernière mise à jour des marqueurs : {lastUpdateDate}{" "}
+            <span className={animate ? "animate-scale" : ""}>
+              {lastUpdateTime}
+            </span>
+          </div>
+        )}
+
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={location || [51.505, -0.09]}>
-          <Popup>
-            Ta position actuelle: <br />
-            Latitude: {latitude} <br />
-            Longitude: {longitude}
-          </Popup>
-        </Marker>
 
-        {/* Marqueurs pour toutes les localisations récupérées du backend */}
+        {location && (
+          <Marker position={location}>
+            <Popup>
+              Ta position actuelle: <br />
+              Latitude: {location[0]} <br />
+              Longitude: {location[1]}
+            </Popup>
+          </Marker>
+        )}
+
         {backendLocations.map((loc, index) => (
           <Marker key={index} position={[loc.latitude, loc.longitude]}>
             <Popup>
@@ -231,6 +240,26 @@ const Map = () => {
           </Marker>
         ))}
       </MapContainer>
+
+      {/* Style CSS pour l'animation */}
+      <style jsx global>{`
+        .animate-scale {
+          display: inline-block; /* Nécessaire pour transform */
+          animation: scaleAnimation 0.5s ease-in-out;
+        }
+
+        @keyframes scaleAnimation {
+          0% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.1);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 };
