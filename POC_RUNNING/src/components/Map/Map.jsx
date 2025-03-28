@@ -41,7 +41,7 @@ const Map = () => {
     };
 
     fetchAllLocations();
-    const interval = setInterval(fetchAllLocations, 3000);
+    const interval = setInterval(fetchAllLocations, 1000);
     return () => clearInterval(interval);
   }, []);
 
