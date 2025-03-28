@@ -1,0 +1,60 @@
+// Palette de couleurs
+$white: #FFFFFF;
+$dark: #404040;
+$green: #A1F763;
+$teal: #048A81;
+
+// Variables supplémentaires
+$radius: 12px;
+$transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+$shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+.homeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 2rem;
+  background-color: $white;
+}
+
+.logoContainer {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.logo {
+  max-width: 200px;
+  height: auto;
+}
+
+.buttonContainer {
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+}
+
+.accessButton {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: $teal;
+  color: $white;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: $radius;
+  transition: $transition;
+  box-shadow: $shadow;
+  width: 100%;
+
+  &:hover {
+    background-color: darken($teal, 10%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}

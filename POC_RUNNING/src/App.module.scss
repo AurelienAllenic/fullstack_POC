@@ -1,0 +1,77 @@
+.appContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    background-color: #ffffff;
+  }
+  
+  .bottomNav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    z-index: 99999999;
+    padding: 1rem;
+  }
+  
+  .navLink {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background-color: #EDEDED;
+    height: 60px;
+    width: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg{
+      width: 30px;
+      height: 30px;
+      path{
+        stroke: #404040;
+        fill: #EDEDED;
+      }
+    }
+  
+    &:hover {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .navLink__center{
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    background-color: #A1F763;
+    height: 100px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg{
+      width: 30px;
+      height: 30px;
+      path{
+        stroke: #404040;
+        fill: #A1F763;
+      }
+    }
+
+    &:hover {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
