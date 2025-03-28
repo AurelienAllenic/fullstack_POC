@@ -112,7 +112,11 @@ app.post("/api/location", authenticateToken, (req, res) => {
     };
   } else {
     // Si l'utilisateur n'existe pas, on ajoute une nouvelle localisation
-    locations.push({ user, latitude, longitude, timestamp: new Date() });
+    locations.push({ user,
+                     latitude,
+                     longitude,
+                     timestamp: new Date()
+                   });
   }
 
   // Sauvegarder les données mises à jour dans le fichier

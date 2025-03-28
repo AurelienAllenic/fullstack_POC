@@ -1,14 +1,20 @@
 [
   {
-    "user": "paul",
-    "latitude": 48.89317899256149,
-    "longitude": 2.2267003755179173,
-    "timestamp": "2025-03-28T11:08:27.671Z"
+    "user": "enzo",
+    "latitude": 50.8931379,
+    "longitude": 2.2269452,
+    "timestamp": "2025-03-27T14:28:26.260Z"
+  },
+  {
+    "user": "lucien",
+    "latitude": 48.8926013,
+    "longitude": 2.2335372,
+    "timestamp": "2025-03-28T09:13:24.642Z"
   },
   {
     "user": "aurel",
-    "latitude": 48.89317899256149,
-    "longitude": 2.2267003755179173,
-    "timestamp": "2025-03-28T11:08:39.259Z"
+    "latitude": 48.893162672650966,
+    "longitude": 2.2267429912609473,
+    "timestamp": "2025-03-28T11:59:24.286Z"
   }
 ]
