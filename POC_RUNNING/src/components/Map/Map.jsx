@@ -225,6 +225,10 @@ const Map = () => {
             <Marker position={location}>
               <Popup>
                 Votre position: <br />
+                <img
+                src={iimpov}
+                style={{ width: "300px", height: "150px" }}
+              ></img>
                 Lat: {location[0].toFixed(4)} <br />
                 Lng: {location[1].toFixed(4)}
               </Popup>
@@ -233,11 +237,17 @@ const Map = () => {
 
           {backendLocations.map((loc, index) => (
             <Marker key={index} position={[loc.latitude, loc.longitude]}>
-              <Popup>
-                <strong>{loc.user}</strong>
-                <br />
-                {new Date(loc.timestamp).toLocaleString()}
-              </Popup>
+             <Popup>
+              Utilisateur: {loc.user} <br />
+              <img
+                src={loc.user == "aurel" ? iimpov : archepov}
+                style={{ width: "300px", height: "150px" }}
+              ></img>
+              <br />
+              Latitude: {loc.latitude} <br />
+              Longitude: {loc.longitude} <br />
+              Timestamp: {new Date(loc.timestamp).toLocaleString()}
+            </Popup>
             </Marker>
           ))}
         </MapContainer>
