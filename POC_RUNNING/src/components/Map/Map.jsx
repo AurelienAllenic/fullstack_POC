@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import axios from "axios";
+import "leaflet/dist/leaflet.css";
+import archepov from "../../assets/archepov.png"
+import iimpov from "../../assets/iimpov.png"
+import L from "leaflet";
 
 const Map = () => {
   const [location, setLocation] = useState(null);
@@ -118,11 +122,28 @@ const Map = () => {
     }
   };
 
+  const onLogoutSubmit = async (data) => {
+    localStorage.removeItem("token");
+    window.location.reload();
+  };
+
   // Affichage de l'erreur ou du chargement
   if (error) return <p>Error: {error}</p>;
   if (loading) return <p>Chargement...</p>;
 
   const [latitude, longitude] = location || [];
+
+  const customIcon = new L.Icon({
+    iconUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+    shadowUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+    iconSize: [25, 41], // Taille de l'icône
+    iconAnchor: [12, 41], // Position de l'ancre
+    popupAnchor: [1, -34], // Position du popup par rapport à l'icône
+    shadowSize: [41, 41], // Taille de l'ombre
+  });
+
 
   return (
     <div>
@@ -181,24 +202,44 @@ const Map = () => {
 
       {/* Afficher le bouton pour ajouter la localisation si l'utilisateur est connecté */}
       {isAuthenticated && (
-        <button
-          onClick={getLocation}
-          style={{
-            position: "absolute",
-            top: "50px",
-            right: "10px",
-            zIndex: 1000,
-            padding: "10px 20px",
-            fontSize: "16px",
-            backgroundColor: "#28a745",
-            color: "#fff",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Ajouter ma localisation
-        </button>
+        <div>
+          <button
+            onClick={getLocation}
+            style={{
+              position: "absolute",
+              top: "50px",
+              right: "10px",
+              zIndex: 1000,
+              padding: "10px 20px",
+              fontSize: "16px",
+              backgroundColor: "#28a745",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Ajouter ma localisation
+          </button>
+          <button
+            onClick={onLogoutSubmit}
+            style={{
+              position: "absolute",
+              top: "100px",
+              right: "10px",
+              zIndex: 1000,
+              padding: "10px 20px",
+              fontSize: "16px",
+              backgroundColor: "red",
+              color: "#fff",
+              border: "none",
+              borderRadius: "5px",
+              cursor: "pointer",
+            }}
+          >
+            Déconnexion
+          </button>
+        </div>
       )}
 
       {/* Carte */}
@@ -211,9 +252,13 @@ const Map = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={location || [51.505, -0.09]}>
+        <Marker position={location || [51.505, -0.09]} icon={customIcon}>
           <Popup>
             Ta position actuelle: <br />
+            <img
+              src={iimpov}
+              style={{ width: "300px", height: "150px" }}
+            ></img>
             Latitude: {latitude} <br />
             Longitude: {longitude}
           </Popup>
@@ -221,9 +266,18 @@ const Map = () => {
 
         {/* Marqueurs pour toutes les localisations récupérées du backend */}
         {backendLocations.map((loc, index) => (
-          <Marker key={index} position={[loc.latitude, loc.longitude]}>
+          <Marker
+            key={index}
+            position={[loc.latitude, loc.longitude]}
+            icon={customIcon}
+          >
             <Popup>
               Utilisateur: {loc.user} <br />
+              <img
+                src={loc.user == "aurel" ? iimpov : archepov}
+                style={{ width: "300px", height: "150px" }}
+              ></img>
+              <br />
               Latitude: {loc.latitude} <br />
               Longitude: {loc.longitude} <br />
               Timestamp: {new Date(loc.timestamp).toLocaleString()}
